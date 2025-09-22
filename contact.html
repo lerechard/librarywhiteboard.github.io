@@ -1,0 +1,87 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="utf-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1" />
+  <title>Go -> Fiscon -> Contact</title>
+  <style>
+    :root { --glass-bg: rgba(255,255,255,0.16); --glass-brd: rgba(255,255,255,0.38); --glass-high: rgba(255,255,255,0.7); --text: #0b2540; --muted: #274862; }
+    body { margin: 0; height: 100svh; display: grid; place-items: center; color: var(--text); font-family: ui-sans-serif, system-ui, -apple-system, Segoe UI, Roboto, Helvetica, Arial, "Apple Color Emoji", "Segoe UI Emoji"; position: relative; overflow: hidden; }
+    body::before { content: ""; position: absolute; inset: 0; z-index: -1; background: linear-gradient(120deg, #f6f0ff, #eaf7ff, #fff5e6, #ffe7f1, #e8ffe7); background-size: 400% 400%; animation: pastelShift 30s ease infinite; filter: url(#ripple); }
+    @keyframes pastelShift { 0%{background-position:0% 50%} 50%{background-position:100% 50%} 100%{background-position:0% 50%} }
+    .wrap { width: min(880px, 92vw); display: flex; flex-direction: column; gap: 22px; position: relative; z-index: 1; }
+    .glass { background: var(--glass-bg); border: 1px solid var(--glass-brd); box-shadow: 0 10px 30px rgba(0,0,0,0.12), inset 0 1px 0 var(--glass-high); backdrop-filter: blur(14px) saturate(1.4); -webkit-backdrop-filter: blur(14px) saturate(1.4); border-radius: 20px; }
+    .title { padding: 18px 22px; text-align: center; font-weight: 800; letter-spacing: .3px; font-size: clamp(22px, 3.2vw, 36px); }
+    .lead { padding: 18px 22px; line-height: 1.6; font-size: 16px; color: var(--muted); }
+    form { display: flex; flex-direction: column; gap: 14px; padding: 16px; }
+    textarea { resize: vertical; min-height: 180px; max-height: 60svh; padding: 16px 18px; line-height: 1.5; border-radius: 16px; border: 1px solid var(--glass-brd); color: var(--text); background: linear-gradient(180deg, rgba(255,255,255,0.55), rgba(255,255,255,0.35)); box-shadow: inset 0 1px 0 var(--glass-high), 0 10px 25px rgba(0,0,0,0.08); backdrop-filter: blur(10px) saturate(1.2); -webkit-backdrop-filter: blur(10px) saturate(1.2); outline: none; font-size: 16px; }
+    textarea::placeholder { color: #27486288 }
+    .btn { appearance: none; cursor: pointer; border: 0; padding: 14px 22px; font-weight: 800; letter-spacing: .3px; font-size: 16px; color: #10324e; border-radius: 999px; position: relative; isolation: isolate; align-self: flex-start; background: radial-gradient(120% 180% at 20% 0%, rgba(255,255,255,0.95), rgba(255,255,255,0.6)), linear-gradient(180deg, rgba(255,255,255,0.8), rgba(255,255,255,0.45)); box-shadow: 0 12px 28px rgba(48,73,102,0.18), inset 0 1px 0 #ffffff; transition: transform .15s ease, box-shadow .2s ease; }
+    .btn::after { content: ""; position: absolute; inset: 0; border-radius: inherit; pointer-events: none; background: radial-gradient(80% 60% at 30% 0%, rgba(255,255,255,0.9), transparent 60%); mix-blend-mode: screen; opacity: .8; }
+    .btn:hover { transform: translateY(-1px); box-shadow: 0 16px 36px rgba(48,73,102,0.24), inset 0 1px 0 #ffffff; }
+    .btn:active { transform: translateY(0); box-shadow: 0 10px 24px rgba(48,73,102,0.18), inset 0 1px 0 #ffffff; }
+    footer { opacity: .7; font-size: 12px; text-align: center; color: #274862; }
+    a { color: #235b8e }
+  </style>
+</head>
+<body>
+  <main class="wrap" id="app">
+    <header class="glass title">Sup vro 👀</header>
+
+    <section class="glass lead">
+      <p>If you are the person who has been drawing bara furries at the library whiteboards then please fill out this form so we can talk!</p>
+      <p>If you would prefer to reach out first you can use this box to send messages. responses will eventually load at <a href="/feedback/">go.fiscon.cc/feedback</a></p>
+    </section>
+
+    <section class="glass" style="padding:0 0 18px">
+      <form id="contact-form">
+        <label for="msg" style="font-size:14px; opacity:.85; padding:0 16px; display:block; margin-top:16px">
+          Your contact info / a quick hello
+        </label>
+        <textarea id="msg" name="content" maxlength="2000"
+          placeholder="Name (or nickname), preferred contact (email, Discord tag, or Instagram), and anything you’d like to share."
+          required></textarea>
+        <div style="padding:0 16px">
+          <button class="btn" type="submit">Send</button>
+        </div>
+        <p style="padding:0 16px">Field clears after sending</p>
+      </form>
+    </section>
+
+    <footer class="glass" style="padding:12px">
+      <p style="margin:0; text-align:center">Yet another wonderful project by ZF.</p>
+    </footer>
+  </main>
+
+  <script>
+    // NOTE: this uses the webhook you provided as-is.
+    // Consider moving it server-side to avoid exposing it publicly.
+    const form = document.getElementById("contact-form");
+    form.addEventListener("submit", async (e) => {
+      e.preventDefault();
+      const msg = document.getElementById("msg").value;
+      try {
+        await fetch("https://discord.com/api/webhooks/"+"1419788672911409182/F7hGsKXRWKoMuskPKOB7iHUFe0zmrLWjE88IvXYG5sI_9jXVKBC-SlDiIVeT-Yb2l8gn", {
+          method: "POST",
+          headers: { "Content-Type": "application/json" },
+          body: JSON.stringify({ content: msg })
+        });
+        form.reset();
+      } catch (err) {
+        alert("Sorry, something went wrong sending your message.");
+        console.error(err);
+      }
+    });
+  </script>
+
+  <!-- Ripple filter -->
+  <svg xmlns="http://www.w3.org/2000/svg" style="display:none">
+    <filter id="ripple">
+      <feTurbulence type="fractalNoise" baseFrequency="0.012" numOctaves="3" seed="2">
+        <animate attributeName="baseFrequency" dur="30s" values="0.012;0.018;0.012" repeatCount="indefinite" />
+      </feTurbulence>
+      <feDisplacementMap in="SourceGraphic" scale="30" />
+    </filter>
+  </svg>
+</body>
+</html>
