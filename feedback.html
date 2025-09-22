@@ -1,0 +1,69 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="utf-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1" />
+  <title>Go -> Fiscon -> Feedback</title>
+  <style>
+    :root { --glass-bg: rgba(255,255,255,0.16); --glass-brd: rgba(255,255,255,0.38); --glass-high: rgba(255,255,255,0.7); --text: #0b2540; --muted: #274862; }
+    body { margin: 0; height: 100svh; display: grid; place-items: center; color: var(--text); font-family: ui-sans-serif, system-ui, -apple-system, Segoe UI, Roboto, Helvetica, Arial, "Apple Color Emoji", "Segoe UI Emoji"; position: relative; overflow: hidden; }
+    body::before { content: ""; position: absolute; inset: 0; z-index: -1; background: linear-gradient(120deg, #f6f0ff, #eaf7ff, #fff5e6, #ffe7f1, #e8ffe7); background-size: 400% 400%; animation: pastelShift 30s ease infinite; filter: url(#ripple); }
+    @keyframes pastelShift { 0%{background-position:0% 50%} 50%{background-position:100% 50%} 100%{background-position:0% 50%} }
+    .wrap { width: min(880px, 92vw); display: flex; flex-direction: column; gap: 22px; position: relative; z-index: 1; }
+    .glass { background: var(--glass-bg); border: 1px solid var(--glass-brd); box-shadow: 0 10px 30px rgba(0,0,0,0.12), inset 0 1px 0 var(--glass-high); backdrop-filter: blur(14px) saturate(1.4); -webkit-backdrop-filter: blur(14px) saturate(1.4); border-radius: 20px; }
+    .title { padding: 18px 22px; text-align: center; font-weight: 800; letter-spacing: .3px; font-size: clamp(22px, 3.2vw, 36px); }
+    .lead { padding: 18px 22px; line-height: 1.6; font-size: 16px; color: var(--muted); }
+    footer { opacity: .7; font-size: 12px; text-align: center; color: #274862; }
+    a { color: #235b8e }
+
+    /* Feedback blocks layout */
+    .grid { display: grid; grid-template-columns: 1fr; gap: 16px; padding: 16px; }
+    @media (min-width: 700px) { .grid { grid-template-columns: 1fr 1fr; } }
+    .card { padding: 16px; }
+    .card h3 { margin: 0 0 8px 0; font-size: 18px; letter-spacing: .2px; }
+    .tag { display: inline-block; font-size: 12px; opacity: .8; padding: 4px 10px; border-radius: 999px; border: 1px solid var(--glass-brd); background: linear-gradient(180deg, rgba(255,255,255,0.55), rgba(255,255,255,0.35)); box-shadow: inset 0 1px 0 var(--glass-high); margin-top: 8px; }
+  </style>
+</head>
+<body>
+  <main class="wrap" id="app">
+    <header class="glass title">Library Whiteboard Feedback</header>
+
+    <section class="glass lead">
+      <p>Responses will show up here.</p>
+    </section>
+
+    <section class="grid" id="blocks"></section>
+
+    <footer class="glass" style="padding:12px">
+      <p style="margin:0; text-align:center">Yet another wonderful project by ZF.</p>
+    </footer>
+  </main>
+
+  <script>
+    // Configure the blocks you want to show on the feedback page:
+    const FEEDBACK_BLOCKS = [
+      { title: "No responses yet", body: "lorem ipsum or whatever", tag: ":3" }
+      // Add more blocks here…
+    ];
+
+    const mount = document.getElementById("blocks");
+    mount.innerHTML = FEEDBACK_BLOCKS.map(({title, body, tag}) => `
+      <article class="glass card">
+        <h3>${title}</h3>
+        <p class="lead" style="padding:0">${body}</p>
+        ${tag ? `<span class="tag">${tag}</span>` : ""}
+      </article>
+    `).join("");
+  </script>
+
+  <!-- Ripple filter -->
+  <svg xmlns="http://www.w3.org/2000/svg" style="display:none">
+    <filter id="ripple">
+      <feTurbulence type="fractalNoise" baseFrequency="0.012" numOctaves="3" seed="2">
+        <animate attributeName="baseFrequency" dur="30s" values="0.012;0.018;0.012" repeatCount="indefinite" />
+      </feTurbulence>
+      <feDisplacementMap in="SourceGraphic" scale="30" />
+    </filter>
+  </svg>
+</body>
+</html>
